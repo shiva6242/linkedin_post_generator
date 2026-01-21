@@ -1,0 +1,10 @@
+# Secrets
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Python
+__pycache__/
+*.pyc

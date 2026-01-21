@@ -1,0 +1,7 @@
+streamlit
+requests
+python-dotenv
+Pillow
+langchain-core
+langchain-google-genai
+huggingface-hub
