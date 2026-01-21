@@ -24,7 +24,7 @@ HF_API_KEY = os.getenv("HF_API_KEY")
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 
-REDIRECT_URI = "http://localhost:8501"
+REDIRECT_URI = "https://linkedinpostgenerator1234.streamlit.app/"
 
 AUTH_URL = "https://www.linkedin.com/oauth/v2/authorization"
 TOKEN_URL = "https://www.linkedin.com/oauth/v2/accessToken"
