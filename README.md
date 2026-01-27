@@ -6,6 +6,8 @@ Built using **Streamlit**, **Google Gemini**, **Hugging Face**, and **LinkedIn A
 
 ---
 
+## LINK : https://linkedinpostgenerator1234.streamlit.app/
+
 ## 🚀 Features
 
 - ✨ Generate professional LinkedIn post text using **Google Gemini**
