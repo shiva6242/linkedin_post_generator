@@ -8,6 +8,9 @@ import requests
 import streamlit as st
 from PIL import Image
 from dotenv import load_dotenv
+from io import BytesIO
+HF_API_URL = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5"
+
 
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import PromptTemplate
@@ -144,11 +147,20 @@ def generate_text(topic):
 
 
 def generate_image(prompt, output_path="generated_image.png"):
-    client = InferenceClient(
-        model="stabilityai/stable-diffusion-2-1",
-        token=HF_API_KEY
-    )
-    image = client.text_to_image(prompt)
+    headers = {
+        "Authorization": f"Bearer {HF_API_KEY}"
+    }
+
+    payload = {
+        "inputs": prompt
+    }
+
+    response = requests.post(HF_API_URL, headers=headers, json=payload)
+
+    if response.status_code != 200:
+        raise RuntimeError(response.text)
+
+    image = Image.open(BytesIO(response.content))
     image.save(output_path)
     return output_path
 
