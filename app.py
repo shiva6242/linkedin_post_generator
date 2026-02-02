@@ -145,7 +145,7 @@ def generate_text(topic):
 
 def generate_image(prompt, output_path="generated_image.png"):
     client = InferenceClient(
-        model="black-forest-labs/FLUX.1-schnell",
+        model="stabilityai/stable-diffusion-2-1",
         token=HF_API_KEY
     )
     image = client.text_to_image(prompt)
