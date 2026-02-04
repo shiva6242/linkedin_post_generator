@@ -16,7 +16,6 @@ import uuid
 
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import PromptTemplate
-from huggingface_hub import InferenceClient
 
 # -------------------------------
 # LOAD ENV VARIABLES
@@ -24,7 +23,6 @@ from huggingface_hub import InferenceClient
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-HF_API_KEY = os.getenv("HF_API_KEY")
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 
