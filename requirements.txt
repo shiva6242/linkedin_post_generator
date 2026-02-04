@@ -1,7 +1,10 @@
 streamlit
-requests
 python-dotenv
+requests
 Pillow
+
+langchain
 langchain-core
 langchain-google-genai
-huggingface-hub
+
+google-generativeai
