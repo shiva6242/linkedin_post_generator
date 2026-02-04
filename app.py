@@ -9,7 +9,9 @@ import streamlit as st
 from PIL import Image
 from dotenv import load_dotenv
 from io import BytesIO
-HF_API_URL = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5"
+
+import base64
+import uuid
 
 
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -146,23 +148,47 @@ def generate_text(topic):
     return llm.invoke(prompt.format(topic=topic)).content
 
 
-def generate_image(prompt, output_path="generated_image.png"):
+
+CLOUDFLARE_API_TOKEN = st.secrets["CLOUDFLARE_API_TOKEN"]
+CLOUDFLARE_ACCOUNT_ID = st.secrets["CLOUDFLARE_ACCOUNT_ID"]
+
+def generate_image(prompt, output_path=None):
+    url = f"https://api.cloudflare.com/client/v4/accounts/{CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/black-forest-labs/flux-1-schnell"
+
     headers = {
-        "Authorization": f"Bearer {HF_API_KEY}"
+        "Authorization": f"Bearer {CLOUDFLARE_API_TOKEN}",
+        "Content-Type": "application/json"
     }
 
-    payload = {
-        "inputs": prompt
-    }
+    payload = {"prompt": prompt}
 
-    response = requests.post(HF_API_URL, headers=headers, json=payload)
+    for attempt in range(3):
+        response = requests.post(url, headers=headers, json=payload)
 
-    if response.status_code != 200:
-        raise RuntimeError(response.text)
+        if response.status_code == 200:
+            data = response.json()
 
-    image = Image.open(BytesIO(response.content))
-    image.save(output_path)
-    return output_path
+            if "result" not in data or "image" not in data["result"]:
+                raise RuntimeError("No image returned from Cloudflare")
+
+            image_bytes = base64.b64decode(data["result"]["image"])
+            image = Image.open(BytesIO(image_bytes))
+
+            os.makedirs("generated_images", exist_ok=True)
+            if not output_path:
+                output_path = f"generated_images/{uuid.uuid4().hex}.png"
+
+            image.save(output_path)
+            return output_path
+
+        # retry on temporary errors
+        if response.status_code in (429, 500, 502, 503):
+            time.sleep(3)
+            continue
+
+        raise RuntimeError(f"Cloudflare error {response.status_code}: {response.text}")
+
+    raise RuntimeError("Image generation failed after retries")
 
 
 def ai_generate_pipeline(query):
